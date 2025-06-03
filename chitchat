@@ -1,0 +1,128 @@
+from pathlib import Path
+import zipfile
+
+# Set up the React project structure
+project_name = "chat-with-me"
+base_path = Path("/mnt/data") / project_name
+src_path = base_path / "src"
+public_path = base_path / "public"
+
+# Create necessary directories
+src_path.mkdir(parents=True, exist_ok=True)
+public_path.mkdir(parents=True, exist_ok=True)
+
+# Create basic React app files
+files = {
+    base_path / "package.json": """{
+  "name": "chat-with-me",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  }
+}
+""",
+    base_path / ".gitignore": """node_modules
+build
+.env
+""",
+    public_path / "index.html": """<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#E6F7FF" />
+    <title>Chat With Me</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
+""",
+    src_path / "index.js": """import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import ChatWithMe from "./ChatWithMe";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <React.StrictMode>
+    <ChatWithMe />
+  </React.StrictMode>
+);
+""",
+    src_path / "index.css": """body {
+  margin: 0;
+  font-family: 'Quicksand', sans-serif;
+  background-color: #E6F7FF;
+}
+""",
+    src_path / "ChatWithMe.js": """import React from "react";
+
+export default function ChatWithMe() {
+  return (
+    <div className="min-h-screen bg-[#E6F7FF] text-gray-800 font-sans">
+      <header className="text-center py-10 bg-white shadow-md">
+        <h1 className="text-4xl font-bold text-blue-600">Chat With Me 💬</h1>
+        <p className="mt-2 text-lg">Need someone to talk to? I'm here for you.</p>
+      </header>
+
+      <section className="py-12 px-4 max-w-3xl mx-auto">
+        <h2 className="text-2xl font-semibold mb-4 text-blue-500">What I Offer</h2>
+        <p className="mb-6">
+          Whether you need a friend, a listener, or a casual chat — I'm all ears. No
+          judgment, just real conversation.
+        </p>
+
+        <div className="bg-white rounded-2xl shadow-md p-6 mb-8">
+          <h3 className="text-xl font-bold mb-2 text-blue-400">How It Works</h3>
+          <ul className="list-disc pl-5 space-y-2">
+            <li>Pick a time that works for you</li>
+            <li>Tell me what you want to talk about</li>
+            <li>We connect via chat or voice — your choice!</li>
+          </ul>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-md p-6 mb-8">
+          <h3 className="text-xl font-bold mb-2 text-blue-400">Pricing</h3>
+          <p>$10 for 30 minutes or $18 for an hour. Flexible and worth it 💙</p>
+        </div>
+
+        <div className="text-center">
+          <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 text-lg rounded-xl">
+            Book a Chat Now
+          </button>
+          <p className="mt-2 text-sm text-gray-500">(You'll be redirected to DM or payment page)</p>
+        </div>
+      </section>
+
+      <footer className="text-center text-sm text-gray-500 py-6">
+        © {new Date().getFullYear()} Chat With Me. Made with 💙
+      </footer>
+    </div>
+  );
+}
+"""
+}
+
+# Write the files to disk
+for path, content in files.items():
+    path.write_text(content)
+
+# Create a ZIP file
+zip_path = Path("/mnt/data") / f"{project_name}.zip"
+with zipfile.ZipFile(zip_path, 'w') as zipf:
+    for file_path in files:
+        zipf.write(file_path, file_path.relative_to(base_path.parent))
+
+zip_path.name  # Return the filename for download link
